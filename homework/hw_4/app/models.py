@@ -13,9 +13,13 @@ class Client(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id, "name": self.name, "surname": self.surname,
-            "credit_card": self.credit_card, "car_number": self.car_number,
+            "id": self.id,
+            "name": self.name,
+            "surname": self.surname,
+            "credit_card": self.credit_card,
+            "car_number": self.car_number,
         }
+
 
 class Parking(db.Model):
     __tablename__ = "parking"
@@ -27,10 +31,13 @@ class Parking(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id, "address": self.address, "opened": self.opened,
+            "id": self.id,
+            "address": self.address,
+            "opened": self.opened,
             "count_places": self.count_places,
             "count_available_places": self.count_available_places,
         }
+
 
 class ClientParking(db.Model):
     __tablename__ = "client_parking"
@@ -57,7 +64,9 @@ class ClientParking(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id, "client_id": self.client_id, "parking_id": self.parking_id,
+            "id": self.id,
+            "client_id": self.client_id,
+            "parking_id": self.parking_id,
             "time_in": self.time_in.isoformat() if self.time_in else None,
             "time_out": self.time_out.isoformat() if self.time_out else None,
         }

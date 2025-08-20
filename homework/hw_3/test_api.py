@@ -2,13 +2,17 @@ import pytest
 
 
 # --- Все GET-методы возвращают 200 ---
-@pytest.mark.parametrize("url", [
-    "/clients",
-    "/clients/1",   # клиент из фикстуры app
-])
+@pytest.mark.parametrize(
+    "url",
+    [
+        "/clients",
+        "/clients/1",  # клиент из фикстуры app
+    ],
+)
 def test_gets_return_200(client, url):
     r = client.get(url)
     assert r.status_code == 200
+
 
 # --- Создание клиента ---
 def test_create_client(client):
@@ -20,6 +24,7 @@ def test_create_client(client):
     assert data["name"] == "Petr"
     assert data["surname"] == "Petrov"
 
+
 # --- Создание парковки ---
 def test_create_parking(client):
     r = client.post("/parkings", json={"address": "2nd ave, 5", "count_places": 3})
@@ -27,6 +32,7 @@ def test_create_parking(client):
     data = r.get_json()
     assert data["count_places"] == 3
     assert data["count_available_places"] == 3  # по умолчанию = count_places
+
 
 # --- Заезд на парковку ---
 @pytest.mark.parking
@@ -38,6 +44,7 @@ def test_enter_parking(client):
     assert data["log"]["time_out"] is None
     # свободных мест стало меньше
     assert data["parking"]["count_available_places"] == 9
+
 
 # --- Выезд с парковки ---
 @pytest.mark.parking

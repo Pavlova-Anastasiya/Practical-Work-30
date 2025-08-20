@@ -11,6 +11,7 @@ class BaseFactory(SQLAlchemyModelFactory):
         sqlalchemy_session = db.session
         sqlalchemy_session_persistence = "flush"  # не коммитим автоматически
 
+
 class ClientFactory(BaseFactory):
     class Meta:
         model = Client
@@ -22,6 +23,7 @@ class ClientFactory(BaseFactory):
         lambda o: Faker("credit_card_number").generate({}) if o._has_card else None
     )
     car_number = Faker("bothify", text="???###")  # типа ABC123
+
 
 class ParkingFactory(BaseFactory):
     class Meta:

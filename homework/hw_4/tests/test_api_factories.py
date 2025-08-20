@@ -16,6 +16,7 @@ def test_create_client_via_factory(client):
     assert new_id > 0
     assert db.session.get(Client, new_id) is not None
 
+
 def test_create_parking_via_factory(client):
     payload = factory.build(dict, FACTORY_CLASS=ParkingFactory)
     payload["count_places"] = max(1, int(payload.get("count_places", 1)))

@@ -5,10 +5,12 @@ from .models import Client, ClientParking, Parking
 
 api_bp = Blueprint("api", __name__)
 
+
 # --- CLIENTS ---
 @api_bp.get("/clients")
 def list_clients():
     return jsonify([c.to_dict() for c in Client.query.all()])
+
 
 @api_bp.get("/clients/<int:client_id>")
 def get_client(client_id: int):
@@ -17,6 +19,7 @@ def get_client(client_id: int):
         return jsonify({"error": "client not found"}), 404
     return jsonify(c.to_dict())
 
+
 @api_bp.post("/clients")
 def create_client():
     data = request.get_json(force=True) or {}
@@ -24,13 +27,15 @@ def create_client():
     if not name or not surname:
         return jsonify({"error": "name and surname required"}), 400
     c = Client(
-        name=name, surname=surname,
+        name=name,
+        surname=surname,
         credit_card=data.get("credit_card"),
         car_number=data.get("car_number"),
     )
     db.session.add(c)
     db.session.commit()
     return jsonify(c.to_dict()), 201
+
 
 # --- PARKINGS ---
 @api_bp.post("/parkings")
@@ -49,6 +54,7 @@ def create_parking():
     db.session.commit()
     return jsonify(p.to_dict()), 201
 
+
 # --- ENTER / EXIT ---
 @api_bp.post("/client_parkings")
 def enter_parking():
@@ -66,7 +72,9 @@ def enter_parking():
     if parking.count_available_places <= 0:
         return jsonify({"error": "no available places"}), 400
 
-    if ClientParking.query.filter_by(client_id=client.id, parking_id=parking.id, time_out=None).first():
+    if ClientParking.query.filter_by(
+        client_id=client.id, parking_id=parking.id, time_out=None
+    ).first():
         return jsonify({"error": "client already inside"}), 400
 
     log = ClientParking.query.filter_by(client_id=client.id, parking_id=parking.id).first()
@@ -79,6 +87,7 @@ def enter_parking():
     db.session.commit()
     return jsonify({"message": "entered", "log": log.to_dict(), "parking": parking.to_dict()}), 201
 
+
 @api_bp.delete("/client_parkings")
 def exit_parking():
     data = request.get_json(force=True) or {}
@@ -88,7 +97,9 @@ def exit_parking():
 
     client = Client.query.get(client_id)
     parking = Parking.query.get(parking_id)
-    log = ClientParking.query.filter_by(client_id=client_id, parking_id=parking_id, time_out=None).first()
+    log = ClientParking.query.filter_by(
+        client_id=client_id, parking_id=parking_id, time_out=None
+    ).first()
     if not client or not parking or not log:
         return jsonify({"error": "client or parking or active log not found"}), 404
     if not client.credit_card:

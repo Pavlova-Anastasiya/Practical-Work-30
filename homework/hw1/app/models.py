@@ -11,6 +11,7 @@ class Client(db.Model):
     credit_card = db.Column(db.String(50))
     car_number = db.Column(db.String(10))
 
+
 class Parking(db.Model):
     __tablename__ = "parking"
     id = db.Column(db.Integer, primary_key=True)
@@ -18,6 +19,7 @@ class Parking(db.Model):
     opened = db.Column(db.Boolean, default=True)
     count_places = db.Column(db.Integer, nullable=False)
     count_available_places = db.Column(db.Integer, nullable=False)
+
 
 class ClientParking(db.Model):
     __tablename__ = "client_parking"
@@ -27,9 +29,7 @@ class ClientParking(db.Model):
     time_in = db.Column(db.DateTime)
     time_out = db.Column(db.DateTime)
 
-    __table_args__ = (
-        db.UniqueConstraint("client_id", "parking_id", name="unique_client_parking"),
-    )
+    __table_args__ = (db.UniqueConstraint("client_id", "parking_id", name="unique_client_parking"),)
 
     def start(self):
         self.time_in = datetime.utcnow()

@@ -8,21 +8,23 @@ from app.models import Client, ClientParking, Parking
 @pytest.fixture(scope="function")
 def app():
     """Тестовое приложение + свежая БД на каждый тест."""
-    app = create_app({
-        "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
-        "SQLALCHEMY_TRACK_MODIFICATIONS": False,
-        # для in-memory SQLite внутри тестового клиента
-        "SQLALCHEMY_ENGINE_OPTIONS": {"connect_args": {"check_same_thread": False}},
-    })
+    app = create_app(
+        {
+            "TESTING": True,
+            "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+            "SQLALCHEMY_TRACK_MODIFICATIONS": False,
+            # для in-memory SQLite внутри тестового клиента
+            "SQLALCHEMY_ENGINE_OPTIONS": {"connect_args": {"check_same_thread": False}},
+        }
+    )
     with app.app_context():
         db.create_all()
 
         # Базовые записи для тестов
-        c = Client(name="Ivan", surname="Ivanov",
-                   credit_card="4242 4242 4242 4242", car_number="ABC123")
-        p = Parking(address="Main st, 1", opened=True,
-                    count_places=10, count_available_places=10)
+        c = Client(
+            name="Ivan", surname="Ivanov", credit_card="4242 4242 4242 4242", car_number="ABC123"
+        )
+        p = Parking(address="Main st, 1", opened=True, count_places=10, count_available_places=10)
         db.session.add_all([c, p])
         db.session.flush()  # чтобы были id
 
@@ -38,10 +40,12 @@ def app():
     with app.app_context():
         db.drop_all()
 
+
 @pytest.fixture()
 def client(app):
     """HTTP-клиент Flask для запросов к API."""
     return app.test_client()
+
 
 @pytest.fixture()
 def db_session(app):

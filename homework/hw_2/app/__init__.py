@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 def create_app(config: dict | None = None) -> Flask:
     app = Flask(__name__)
     app.config.update(
@@ -16,6 +17,7 @@ def create_app(config: dict | None = None) -> Flask:
     db.init_app(app)
 
     from .routes import api_bp
+
     app.register_blueprint(api_bp)
 
     return app
