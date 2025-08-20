@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
+
 from . import db
-from .models import Client, Parking, ClientParking
+from .models import Client, ClientParking, Parking
 
 api_bp = Blueprint("api", __name__)
 

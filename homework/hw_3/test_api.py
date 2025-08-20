@@ -1,5 +1,6 @@
 import pytest
 
+
 # --- Все GET-методы возвращают 200 ---
 @pytest.mark.parametrize("url", [
     "/clients",

@@ -1,7 +1,9 @@
 import factory
 from app import db
 from app.models import Client, Parking
+
 from .factories import ClientFactory, ParkingFactory
+
 
 def test_create_client_via_factory(client):
     payload = factory.build(dict, FACTORY_CLASS=ClientFactory)

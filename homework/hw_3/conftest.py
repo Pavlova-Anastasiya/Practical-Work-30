@@ -1,8 +1,9 @@
-import pytest
 from datetime import datetime, timedelta
 
+import pytest
 from app import create_app, db
-from app.models import Client, Parking, ClientParking
+from app.models import Client, ClientParking, Parking
+
 
 @pytest.fixture(scope="function")
 def app():

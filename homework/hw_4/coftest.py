@@ -1,6 +1,7 @@
 import pytest
 from app import create_app, db
 
+
 @pytest.fixture(scope="function")
 def app():
     app = create_app({

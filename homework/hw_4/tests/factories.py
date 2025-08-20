@@ -1,9 +1,9 @@
 import factory
+from app import db
+from app.models import Client, Parking
 from factory import Faker, LazyAttribute
 from factory.alchemy import SQLAlchemyModelFactory
 
-from app import db
-from app.models import Client, Parking
 
 class BaseFactory(SQLAlchemyModelFactory):
     class Meta:
