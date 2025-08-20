@@ -1,5 +1,6 @@
 import pytest
-from app import create_app, db
+
+from homework.hw_4.app import create_app, db
 
 
 @pytest.fixture(scope="function")
@@ -25,5 +26,6 @@ def client(app):
 
 @pytest.fixture()
 def db_session(app):
-    yield db.session
-    db.session.rollback()
+    with app.app_context():
+        yield db.session
+        db.session.rollback()
