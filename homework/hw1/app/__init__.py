@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 db: SQLAlchemy = SQLAlchemy()
 
 
-
 def create_app(config: dict | None = None) -> Flask:
     app = Flask(__name__)
     app.config.update(
