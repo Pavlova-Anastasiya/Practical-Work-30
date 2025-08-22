@@ -33,7 +33,7 @@ jobs:
         run: flake8 .
 
       - name: mypy
-        run: mypy module_30_ci_linters/homework
+        run: mypy homework
 
       - name: pytest
         run: pytest -q
