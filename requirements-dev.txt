@@ -3,3 +3,4 @@ black
 isort
 mypy
 pytest
+types-Flask-SQLAlchemy
