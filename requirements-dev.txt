@@ -1,7 +1,7 @@
-flake8
-black
-isort
-mypy
-pytest
+flake8==7.0.0
+black==24.4.2
+isort==5.13.2
+mypy==1.9.0
+pytest==8.2.0
 types-Flask-SQLAlchemy
-sqlalchemy[mypy]>=2.0
+sqlalchemy[mypy]==2.0.15
