@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 
     db: "SQLAlchemy"
 
+
 class Client(db.Model):
     __tablename__ = "client"
     id = db.Column(db.Integer, primary_key=True)
