@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()  # отложенная инициализация
+db: SQLAlchemy = SQLAlchemy()
+
 
 
 def create_app(config: dict | None = None) -> Flask:
