@@ -1,29 +1,17 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, cast
+from typing import Type, cast
 
-from . import db as _db
+from flask_sqlalchemy.model import Model as FSA_Model
 
-# === тип-подсказка для mypy ===
-if TYPE_CHECKING:
-    from flask_sqlalchemy import SQLAlchemy
-    from flask_sqlalchemy.model import Model as FsaModel
+from . import db
 
-    class _SQLAlchemy(SQLAlchemy):
-        # ВАЖНО: db.Model – это тип класса модели
-        Model: type[FsaModel]
-
-else:
-
-    class _SQLAlchemy:  # рантайм-заглушка
-        pass
+# Подсказываем mypy, что db.Model — это валидный базовый класс модели
+BaseModel = cast(Type[FSA_Model], db.Model)
 
 
-db = cast("_SQLAlchemy", _db)
-# === конец тип-подсказки ===
-
-
-class Client(db.Model):
+class Client(BaseModel):
     __tablename__ = "client"
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     surname = db.Column(db.String(50), nullable=False)
@@ -40,8 +28,9 @@ class Client(db.Model):
         }
 
 
-class Parking(db.Model):
+class Parking(BaseModel):
     __tablename__ = "parking"
+
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(100), nullable=False)
     opened = db.Column(db.Boolean, default=True)
@@ -58,8 +47,9 @@ class Parking(db.Model):
         }
 
 
-class ClientParking(db.Model):
+class ClientParking(BaseModel):
     __tablename__ = "client_parking"
+
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey("client.id"))
     parking_id = db.Column(db.Integer, db.ForeignKey("parking.id"))
@@ -68,6 +58,7 @@ class ClientParking(db.Model):
 
     __table_args__ = (db.UniqueConstraint("client_id", "parking_id", name="unique_client_parking"),)
 
+    # связи (если нужны в ДЗ)
     client = db.relationship("Client")
     parking = db.relationship("Parking")
 
