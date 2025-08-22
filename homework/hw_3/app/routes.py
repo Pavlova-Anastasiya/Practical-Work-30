@@ -9,12 +9,15 @@ api_bp = Blueprint("api", __name__)
 # --- CLIENTS ---
 @api_bp.get("/clients")
 def list_clients():
-    return jsonify([c.to_dict() for c in Client.query.all()])
+    # было: Client.query.all()
+    clients = db.session.query(Client).all()
+    return jsonify([c.to_dict() for c in clients])
 
 
 @api_bp.get("/clients/<int:client_id>")
 def get_client(client_id: int):
-    c = Client.query.get(client_id)
+    # было: Client.query.get(client_id)
+    c = db.session.get(Client, client_id)
     if not c:
         return jsonify({"error": "client not found"}), 404
     return jsonify(c.to_dict())
@@ -63,8 +66,9 @@ def enter_parking():
     if not client_id or not parking_id:
         return jsonify({"error": "client_id and parking_id required"}), 400
 
-    client = Client.query.get(client_id)
-    parking = Parking.query.get(parking_id)
+    # было: Client.query.get(...), Parking.query.get(...)
+    client = db.session.get(Client, client_id)
+    parking = db.session.get(Parking, parking_id)
     if not client or not parking:
         return jsonify({"error": "client or parking not found"}), 404
     if not parking.opened:
@@ -72,12 +76,20 @@ def enter_parking():
     if parking.count_available_places <= 0:
         return jsonify({"error": "no available places"}), 400
 
-    if ClientParking.query.filter_by(
-        client_id=client.id, parking_id=parking.id, time_out=None
-    ).first():
+    # было: ClientParking.query.filter_by(...).first()
+    already_inside = (
+        db.session.query(ClientParking)
+        .filter_by(client_id=client.id, parking_id=parking.id, time_out=None)
+        .first()
+    )
+    if already_inside:
         return jsonify({"error": "client already inside"}), 400
 
-    log = ClientParking.query.filter_by(client_id=client.id, parking_id=parking.id).first()
+    log = (
+        db.session.query(ClientParking)
+        .filter_by(client_id=client.id, parking_id=parking.id)
+        .first()
+    )
     if not log:
         log = ClientParking(client_id=client.id, parking_id=parking.id)
         db.session.add(log)
@@ -85,7 +97,10 @@ def enter_parking():
     log.start()
     parking.count_available_places -= 1
     db.session.commit()
-    return jsonify({"message": "entered", "log": log.to_dict(), "parking": parking.to_dict()}), 201
+    return (
+        jsonify({"message": "entered", "log": log.to_dict(), "parking": parking.to_dict()}),
+        201,
+    )
 
 
 @api_bp.delete("/client_parkings")
@@ -95,11 +110,13 @@ def exit_parking():
     if not client_id or not parking_id:
         return jsonify({"error": "client_id and parking_id required"}), 400
 
-    client = Client.query.get(client_id)
-    parking = Parking.query.get(parking_id)
-    log = ClientParking.query.filter_by(
-        client_id=client_id, parking_id=parking_id, time_out=None
-    ).first()
+    client = db.session.get(Client, client_id)
+    parking = db.session.get(Parking, parking_id)
+    log = (
+        db.session.query(ClientParking)
+        .filter_by(client_id=client_id, parking_id=parking_id, time_out=None)
+        .first()
+    )
     if not client or not parking or not log:
         return jsonify({"error": "client or parking or active log not found"}), 404
     if not client.credit_card:
@@ -112,4 +129,7 @@ def exit_parking():
 
     parking.count_available_places += 1
     db.session.commit()
-    return jsonify({"message": "exited", "log": log.to_dict(), "parking": parking.to_dict()}), 200
+    return (
+        jsonify({"message": "exited", "log": log.to_dict(), "parking": parking.to_dict()}),
+        200,
+    )
