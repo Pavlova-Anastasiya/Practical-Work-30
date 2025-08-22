@@ -1,28 +1,26 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, cast
 
-from . import db as _db  # реальный объект db (Flask-SQLAlchemy)
+from . import db as _db
 
-# Подсказываем mypy, что у db есть атрибут Model
+# === тип-подсказка для mypy ===
 if TYPE_CHECKING:
     from flask_sqlalchemy import SQLAlchemy
-    from flask_sqlalchemy.model import DefaultMeta
+    from flask_sqlalchemy.model import Model as FsaModel
 
     class _SQLAlchemy(SQLAlchemy):
-        Model: DefaultMeta
-
+        # ВАЖНО: db.Model – это тип класса модели
+        Model: type[FsaModel]
 else:
-    # заглушка для рантайма, чтобы имя существовало
-    class _SQLAlchemy:  # type: ignore[too-many-ancestors]
+    class _SQLAlchemy:  # рантайм-заглушка
         pass
 
-
 db = cast("_SQLAlchemy", _db)
+# === конец тип-подсказки ===
 
 
 class Client(db.Model):
     __tablename__ = "client"
-
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     surname = db.Column(db.String(50), nullable=False)
@@ -41,7 +39,6 @@ class Client(db.Model):
 
 class Parking(db.Model):
     __tablename__ = "parking"
-
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(100), nullable=False)
     opened = db.Column(db.Boolean, default=True)
@@ -60,7 +57,6 @@ class Parking(db.Model):
 
 class ClientParking(db.Model):
     __tablename__ = "client_parking"
-
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey("client.id"))
     parking_id = db.Column(db.Integer, db.ForeignKey("parking.id"))
@@ -90,3 +86,4 @@ class ClientParking(db.Model):
             "time_in": self.time_in.isoformat() if self.time_in else None,
             "time_out": self.time_out.isoformat() if self.time_out else None,
         }
+
