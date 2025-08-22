@@ -11,9 +11,12 @@ if TYPE_CHECKING:
     class _SQLAlchemy(SQLAlchemy):
         # ВАЖНО: db.Model – это тип класса модели
         Model: type[FsaModel]
+
 else:
+
     class _SQLAlchemy:  # рантайм-заглушка
         pass
+
 
 db = cast("_SQLAlchemy", _db)
 # === конец тип-подсказки ===

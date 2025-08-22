@@ -11,9 +11,12 @@ if TYPE_CHECKING:
     class _SQLAlchemy(SQLAlchemy):
         # ВАЖНО: db.Model – это тип класса модели
         Model: type[FsaModel]
+
 else:
+
     class _SQLAlchemy:  # рантайм-заглушка
         pass
+
 
 db = cast("_SQLAlchemy", _db)
 # === конец тип-подсказки ===
@@ -86,4 +89,3 @@ class ClientParking(db.Model):
             "time_in": self.time_in.isoformat() if self.time_in else None,
             "time_out": self.time_out.isoformat() if self.time_out else None,
         }
-
