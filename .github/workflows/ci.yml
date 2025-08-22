@@ -33,8 +33,9 @@ jobs:
         run: flake8 .
 
       - name: mypy
-        run: mypy homework
+        run: mypy .
 
       - name: pytest
         run: pytest -q
+
 
