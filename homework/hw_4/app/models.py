@@ -1,12 +1,17 @@
 from datetime import datetime
-from typing import Type, cast
+from typing import TYPE_CHECKING
 
-from flask_sqlalchemy.model import Model as FSA_Model
+from flask_sqlalchemy.model import Model as FSAModel
 
 from . import db
 
-# Подсказываем mypy, что db.Model — это валидный базовый класс модели
-BaseModel = cast(Type[FSA_Model], db.Model)
+
+class BaseModel(FSAModel):
+    pass
+
+
+if not TYPE_CHECKING:
+    BaseModel = db.Model  # type: ignore[assignment,misc]  # noqa: F811
 
 
 class Client(BaseModel):
