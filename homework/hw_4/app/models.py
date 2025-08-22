@@ -5,8 +5,13 @@ from . import db
 
 if TYPE_CHECKING:
     from flask_sqlalchemy import SQLAlchemy
+    from flask_sqlalchemy.model import DefaultMeta
 
-    db: "SQLAlchemy"
+    # Подсказка типов для mypy: у db есть атрибут Model
+    class _SQLAlchemy(SQLAlchemy):
+        Model: DefaultMeta
+
+    db: _SQLAlchemy
 
 
 class Client(db.Model):

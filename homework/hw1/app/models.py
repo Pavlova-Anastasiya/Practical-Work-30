@@ -5,8 +5,13 @@ from . import db
 
 if TYPE_CHECKING:
     from flask_sqlalchemy import SQLAlchemy
+    from flask_sqlalchemy.model import DefaultMeta
 
-    db: "SQLAlchemy"
+    # Подсказка типов для mypy: у db есть атрибут Model
+    class _SQLAlchemy(SQLAlchemy):
+        Model: DefaultMeta
+
+    db: _SQLAlchemy
 
 
 class Client(db.Model):
@@ -37,11 +42,11 @@ class ClientParking(db.Model):
 
     __table_args__ = (db.UniqueConstraint("client_id", "parking_id", name="unique_client_parking"),)
 
-    def start(self):
+    def start(self) -> None:
         self.time_in = datetime.utcnow()
         self.time_out = None
 
-    def finish(self):
+    def finish(self) -> None:
         now = datetime.utcnow()
         if self.time_in and now < self.time_in:
             raise ValueError("time_out earlier than time_in")
